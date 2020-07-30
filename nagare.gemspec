@@ -3,7 +3,7 @@
 require_relative 'lib/nagare/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'nagare'
+  spec.name          = 'nagare-redis'
   spec.version       = Nagare::VERSION
   spec.authors       = ['Alex Reis']
   spec.email         = ['alex@alexmreis.com']

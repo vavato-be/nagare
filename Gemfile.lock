@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nagare (0.1.0)
+    nagare-redis (0.1.0)
       redis (~> 4.2, >= 4.1.0)
 
 GEM
@@ -50,7 +50,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  nagare!
+  nagare-redis!
   rake (~> 12.0)
   rspec (~> 3.0)
   rubocop (~> 0.88, >= 0.88)
