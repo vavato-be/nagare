@@ -24,9 +24,6 @@ information on how this works see
 
 ### Configuration
 
-
-## Installation
-
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -42,7 +39,7 @@ Or install it yourself as:
     $ gem install nagare
 
 To use with rails, add nagare to the initializers:
-### config/initializers/nagare.rb
+#### config/initializers/nagare.rb
 ```ruby
 Nagare.configure do |config|
   # After x seconds a consumer is considered dead and its messages
@@ -72,13 +69,13 @@ end
 
 ## Usage
 
-## Concepts
-### Publishers
+### Concepts
+#### Publishers
 **Publisher** is a mixin you can add into controllers, models and services to
 produce events to be consumed by other parts of your application or other
 microservices in your landscape.
 
-#### Usage
+##### Usage
 ```ruby
 class User < ApplicationModel
   include Nagare::Publisher
@@ -92,10 +89,10 @@ class User < ApplicationModel
 end
 ```
 
-### Listeners
+#### Listeners
 **Listener** is a new first class citizen in the Rails world like models and 
 controllers. They receive events from Redis Stream Groups and process them.
-#### Usage
+##### Usage
 ```ruby
 class UserListener < Nagare::Listener
   stream 'users'
@@ -115,7 +112,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/nagare. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/nagare/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/nagare. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/vavato-be/nagare/blob/master/CODE_OF_CONDUCT.md).
 
 
 ## License
