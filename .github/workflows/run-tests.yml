@@ -1,0 +1,54 @@
+---
+name: CI
+on: [push, pull_request]
+env:
+  CI: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+        - 6379/tcp
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby 2.6
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.6
+
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Fix broken apt list
+        if: matrix == null || matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-18.04'
+        run: sudo perl -p -i -e 's#16\.04/prod xenial#18.04/prod bionic#' /etc/apt/sources.list.d/microsoft-prod.list{,.save}
+
+      - name: Bundle Install and Create DB
+        env:
+          REDIS_URL: localhost
+          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+        run: |
+          gem install bundler --no-document
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+      #- name: Perform overcommit hooks	
+        #run: |	
+          #bundle exec overcommit --install
+          #bundle exec overcommit --sign
+          #bundle exec overcommit --sign pre-commit
+          #SKIP=AuthorEmail,AuthorName bundle exec overcommit --run
+
+      - name: Run tests
+        env:
+          REDIS_URL: localhost
+          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+        run: |
+          bundle exec rspec
