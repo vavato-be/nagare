@@ -1,5 +1,3 @@
-# Nagare
-
 # nagare - A publish/subscribe library backed by Redis Streams
 
 Nagare (flow in japanese) makes it easy to work with **Redis Streams** events 
@@ -20,7 +18,7 @@ to configuration.
 Nagare ensures that if a listener is removed or dies, messages are redistributed
 to other listeners as soon as they become available, based on a timeout. For more
 information on how this works see 
-(Recovering from permanent failures)[https://redis.io/topics/streams-intro#recovering-from-permanent-failures]
+[Recovering from permanent failures](https://redis.io/topics/streams-intro#recovering-from-permanent-failures)
 
 ### Configuration
 
