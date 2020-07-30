@@ -1,24 +1,23 @@
+# frozen_string_literal: true
+
 module Nagare
   ##
   # ListenerPool acts both as a registry of all listeners in the application
   # and as the polling mechanism that retrieves messages from redis using
   # consumer groups and deivers them to registered listenersone at a time.
   class ListenerPool
-
     class << self
       ##
       # A registry of listeners in the format { stream: [listeners...]}
       #
       # @return [Hash] listeners
       def listener_pool
-        listeners = ObjectSpace.each_object(Class).select { |klass| klass < Nagare::Listener }
         listeners.each_with_object({}) do |listener, hash|
           stream = listener.stream_name
 
           unless hash.key?(listener.stream_name)
-            logger.debug("Assigned stream #{stream} to listener #{listener.name}")
-            created = create_and_subscribe_to_stream(stream)
-            logger.debug("Created group and/or stream for stream #{stream}") if created
+            logger.debug "Assigned stream #{stream} - listener #{listener.name}"
+            create_and_subscribe_to_stream(stream)
             hash[stream] = []
           end
           hash[stream] << listener
@@ -26,12 +25,19 @@ module Nagare
         end
       end
 
+      def listeners
+        ObjectSpace.each_object(Class).select do |klass|
+          klass < Nagare::Listener
+        end
+      end
+
       ##
-      # Initiates polling of redis and distribution of messages to listeners in a thread
+      # Initiates polling of redis and distribution of messages to
+      # listeners in a thread
       #
       # @return [Thread] the listening thread
       def start_listening
-        logger.info "Starting Nagare thread"
+        logger.info 'Starting Nagare thread'
         Thread.new do
           loop do
             poll
@@ -42,10 +48,10 @@ module Nagare
 
       ##
       # Polls redis for new messages on all registered streams and delivers
-      # messages to the registered listeners. If the listener does not raise any errors,
-      # automatically ACKs the message to the redis consumer group.
+      # messages to the registered listeners. If the listener does not raise any
+      # errors, automatically ACKs the message to the redis consumer group.
       def poll
-        self.listener_pool.each do |stream, listeners|
+        listener_pool.each do |stream, listeners|
           poll_stream(stream, listeners)
         end
       end
@@ -53,7 +59,7 @@ module Nagare
       private
 
       def poll_stream(stream, listeners)
-        #TODO: Use thread pool
+        # TODO: Use thread pool
         messages = Nagare::RedisStreams.read_next_messages(stream, group)
         return unless messages.any?
 
@@ -64,21 +70,26 @@ module Nagare
 
       def deliver_message(stream, message, listeners)
         listener_failed = false
+
         listeners.each do |listener|
           invoke_listener(stream, message, listener)
-        rescue => e
-          #TODO: Retry logic
+        rescue StandardError => e
+          # TODO: Retry logic
           logger.error e.message
           logger.error e.backtrace.join("\n")
           listener_failed = true
-          #TODO: Notify Appsignal
+          # TODO: Notify Appsignal
         end
-        Nagare::RedisStreams.mark_processed(stream, group, message[0]) unless listener_failed
+
+        return if listener_failed
+
+        Nagare::RedisStreams.mark_processed(stream, group, message[0])
       end
 
       def invoke_listener(stream, message, listener)
-        #TODO: Transactions
-        logger.info "Invoking listener #{listener.name} for stream #{stream} with message #{message}"
+        # TODO: Transactions
+        logger.info "Invoking listener #{listener.name} for stream #{stream} "\
+          "with message #{message}"
         listener.new.handle_event(message[1])
       end
 

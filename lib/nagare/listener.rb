@@ -1,5 +1,6 @@
-require_relative './listener_pool'
+# frozen_string_literal: true
 
+require_relative './listener_pool'
 module Nagare
   ##
   # Listener is a base class for your own listeners.
@@ -26,14 +27,15 @@ module Nagare
       #
       # @param name [String] name of the stream the listener should listen to.
       def stream(name)
-        self.class_variable_set(:@@stream_name, name)
+        class_variable_set(:@@stream_name, name)
+
         # Force consumer group creation
         Nagare::ListenerPool.listener_pool
         name
       end
 
       def stream_name
-        self.class_variable_get(:@@stream_name)
+        class_variable_get(:@@stream_name)
       end
     end
 
@@ -45,8 +47,8 @@ module Nagare
     end
 
     ##
-    # This method gets called by the ListenerPool when messages are received from
-    # redis. You may override it in your own listener if you so wish.
+    # This method gets called by the ListenerPool when messages are received
+    # from redis. You may override it in your own listener if you so wish.
     #
     # The default implementation works based on the following convention:
     # Listeners define methods with the name of the event they handle.
@@ -55,8 +57,9 @@ module Nagare
     def handle_event(event)
       event_name = event.keys.first
       Nagare.logger.debug("Received #{event}")
-      return unless self.respond_to?(event_name)
-      self.send(event_name, JSON.parse(event[event_name], symbolize_names: true))
+      return unless respond_to?(event_name)
+
+      send(event_name, JSON.parse(event[event_name], symbolize_names: true))
     end
   end
 end

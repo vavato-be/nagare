@@ -23,6 +23,8 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = 'https://github.com/vavato-be/nagare/CHANGELOG.md'
 
   spec.add_runtime_dependency 'redis', '~> 4.2', '>= 4.1.0'
+  spec.add_development_dependency 'rubocop', '~> 0.88', '>= 0.88'
+  spec.add_development_dependency 'rubocop-rspec', '~> 1.42', '>= 1.42.0'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

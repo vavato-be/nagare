@@ -30,6 +30,7 @@ module Nagare
       # @param group [String] name of the group
       #
       # @return [Boolean] true if the group exists, otherwise false
+      # rubocop:disable Metrics/AbcSize
       def group_exists?(stream, group)
         stream = stream_name(stream)
         info = connection.xinfo(:groups, stream.to_s)
@@ -40,6 +41,7 @@ module Nagare
         logger.info e.backtrace.join("\n")
         false
       end
+      # rubocop:enable Metrics/AbcSize
 
       ##
       # Creates a group in redis for the stream using xgroup
@@ -50,7 +52,8 @@ module Nagare
       # @return [String] OK
       def create_group(stream, group)
         stream = stream_name(stream)
-        connection.xgroup(:create, stream, "#{stream}-#{group}", '$', mkstream: true)
+        connection.xgroup(:create, stream, "#{stream}-#{group}", '$',
+                          mkstream: true)
       end
 
       ##
@@ -84,7 +87,8 @@ module Nagare
       # @returns [Array] Array of tuples with [message-id, data_as_hash]
       def read_next_messages(stream, group)
         stream = stream_name(stream)
-        result = connection.xreadgroup("#{stream}-#{group}", "#{hostname}-#{thread_id}", stream, '>')
+        result = connection.xreadgroup("#{stream}-#{group}",
+                                       "#{hostname}-#{thread_id}", stream, '>')
         result[stream] || []
       end
 
@@ -103,7 +107,8 @@ module Nagare
         count = connection.xack(stream, group, message_id)
         return if count == 1
 
-        raise "Message could not be ACKed in Redis: #{stream} #{group} #{message_id}. Return value: #{count}"
+        raise "Message could not be ACKed in Redis: #{stream} #{group} "\
+          "#{message_id}. Return value: #{count}"
       end
 
       ##
@@ -139,7 +144,12 @@ module Nagare
       ##
       # Query pending messages for a consumer group
       #
-      # @return [Hash] {"size"=>0, "min_entry_id"=>nil, "max_entry_id"=>nil, "consumers"=>{}}
+      # @return [Hash] {
+      #   "size"=>0,
+      #   "min_entry_id"=>nil,
+      #   "max_entry_id"=>nil,
+      #   "consumers"=>{}
+      # }
       def pending(stream, group)
         stream = stream_name(stream)
         group = "#{stream}-#{group}"

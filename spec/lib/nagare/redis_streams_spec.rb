@@ -1,18 +1,18 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe Nagare::RedisStreams do
-
   describe 'mark_processed' do
     let(:stream) { 'nagare_redis_streams_spec' }
     let(:group) { 'monolith' }
 
     # Remove existing group or stream
     before do
-        described_class.delete_group(stream, group)
-        described_class.truncate(stream)
-    rescue => e
-        puts e.message
-
+      described_class.delete_group(stream, group)
+      described_class.truncate(stream)
+    rescue StandardError => e
+      puts e.message
     end
 
     context 'when a message is published on a stream with an existing consumer group' do

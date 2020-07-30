@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 module Nagare
   ##
   # Publisher is a mixin that allows classes to easily publish events
   # to a redis stream.
   module Publisher
     ##
-    # Class methods that get injected into a class or module that extends Publisher
+    # Class methods that get injected into a class or module that
+    # extends Publisher
     module ClassMethods
       attr_accessor :redis_publisher_stream
+
       ##
       # Defines which stream to use for publish when none is specified
       #
@@ -30,14 +34,16 @@ module Nagare
     # Event name will be used on the listener side to determine
     # which method of the listener to invoke.
     #
-    # @param event_name [String] event_name name of the event. If it matches
-    #  a method on a listener on this stream, that method will be
-    #  invoked upon receiving the message
+    # @param event_name [String] event_name name of the event. If it
+    # matches a method on a listener on this stream, that method will
+    # be invoked upon receiving the message
+    #
     # @param data       [Object] an object representing the data
     # @param stream     [String] name of the stream to publish to
     def publish(event_name, data, stream = nil)
       stream ||= stream_name
-      Nagare.logger.info "Publishing to stream #{stream}: #{event_name}: #{data}"
+      Nagare.logger.info "Publishing to stream #{stream}: "\
+        "#{event_name}: #{data}"
       Nagare::RedisStreams.publish(stream, event_name, data.to_json)
     end
 

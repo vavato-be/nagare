@@ -49,4 +49,5 @@ jobs:
         env:
           REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
         run: |
+          bundle exec rubocop
           bundle exec rspec
