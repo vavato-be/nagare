@@ -32,8 +32,7 @@ jobs:
 
       - name: Bundle Install and Create DB
         env:
-          REDIS_URL: localhost
-          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
         run: |
           gem install bundler --no-document
           bundle config path vendor/bundle
@@ -48,7 +47,6 @@ jobs:
 
       - name: Run tests
         env:
-          REDIS_URL: localhost
-          REDIS_PORT: ${{ job.services.redis.ports[6379] }}
+          REDIS_URL: redis://localhost:${{ job.services.redis.ports[6379] }}
         run: |
           bundle exec rspec
