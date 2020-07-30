@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.metadata['source_code_uri'] = 'https://github.com/vavato-be/nagare.git'
   spec.metadata['changelog_uri'] = 'https://github.com/vavato-be/nagare/CHANGELOG.md'
 
-  spec.add_dependency 'redis', '~> 4.2', '>= 4.1.0'
+  spec.add_dependency 'redis', '~> 4.1', '>= 4.1.0'
   spec.add_development_dependency 'rubocop', '~> 0.88', '>= 0.88'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.42', '>= 1.42.0'
 
