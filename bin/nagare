@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+if File.exist?('config/environment.rb')
+  # Load rails env if inside a rails appa
+  require_relative '../config/environment'
+elsif File.exist?('Gemfile.lock')
+  # Load bundler context if using bundler
+  require 'bundler/setup'
+end
+
+require 'nagare'
+
+Nagare.logger = nil
+Nagare.logger.level = :info
+
+# TODO: Capture interrupt and wait for listeners to not be busy before shutting
+#       down
+Nagare::ListenerPool.start_listening.join
