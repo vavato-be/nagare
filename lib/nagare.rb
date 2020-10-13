@@ -2,6 +2,7 @@
 
 require 'logger'
 require 'json'
+require 'redis'
 require 'nagare/version'
 require 'nagare/config'
 require 'nagare/redis_streams'
