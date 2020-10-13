@@ -25,7 +25,7 @@ information on how this works see
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'nagare'
+gem 'nagare-redis'
 ```
 
 And then execute:
