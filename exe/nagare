@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 if File.exist?('config/environment.rb')
-  # Load rails env if inside a rails appa
-  require_relative '../config/environment'
+  # Load rails env if inside a rails app
+  require_relative File.join(Dir.pwd, 'config', 'environment')
 elsif File.exist?('Gemfile.lock')
   # Load bundler context if using bundler
   require 'bundler/setup'
