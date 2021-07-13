@@ -30,7 +30,6 @@ module Nagare
       # @param group [String] name of the group
       #
       # @return [Boolean] true if the group exists, otherwise false
-      # rubocop:disable Metrics/AbcSize
       def group_exists?(stream, group)
         stream = stream_name(stream)
         info = connection.xinfo(:groups, stream.to_s)
@@ -41,7 +40,6 @@ module Nagare
         logger.info e.backtrace.join("\n")
         false
       end
-      # rubocop:enable Metrics/AbcSize
 
       ##
       # Creates a group in redis for the stream using xgroup
@@ -79,6 +77,25 @@ module Nagare
       def publish(stream, event_name, data)
         stream = stream_name(stream)
         connection.xadd(stream, { "#{event_name}": data })
+      end
+
+      ##
+      # Claums the next message of the consumer group that is stuck
+      # (pending and past min_idle_time since being picked up)
+      #
+      # @param stream [String] name of the stream
+      # @param group [String] name of the consumer group
+      #
+      # @return [Array[Hash]] array containing the 1 message or empty
+      def claim_next_stuck_message(stream, group)
+        stream = stream_name(stream)
+        result = connection.xautoclaim(stream,
+                                       "#{stream}-#{group}",
+                                       "#{hostname}-#{thread_id}",
+                                       Nagare::Config.min_idle_time,
+                                       '0-0',
+                                       count: 1)
+        result['entries'] || []
       end
 
       ##

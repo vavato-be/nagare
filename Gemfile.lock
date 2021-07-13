@@ -1,8 +1,14 @@
+GIT
+  remote: https://github.com/vavato-be/redis-rb.git
+  revision: 79f36a58e69beb72f3bcef2ae584b30324fa2f07
+  specs:
+    redis (6.2.0)
+
 PATH
   remote: .
   specs:
-    nagare-redis (0.1.3)
-      redis (~> 4.1, >= 4.1.0)
+    nagare-redis (0.1.4)
+      redis (~> 6.2, >= 6.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -14,7 +20,6 @@ GEM
       ast (~> 2.4.1)
     rainbow (3.0.0)
     rake (12.3.2)
-    redis (4.2.1)
     regexp_parser (1.7.1)
     rexml (3.2.4)
     rspec (3.9.0)
@@ -52,6 +57,7 @@ PLATFORMS
 DEPENDENCIES
   nagare-redis!
   rake (~> 12.0)
+  redis!
   rspec (~> 3.0)
   rubocop (~> 0.88, >= 0.88)
   rubocop-rspec (~> 1.42, >= 1.42.0)

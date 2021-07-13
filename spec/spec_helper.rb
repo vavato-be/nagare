@@ -14,4 +14,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # Initialize config defaults
+  Nagare::Config.configure do |_config|
+  end
 end
