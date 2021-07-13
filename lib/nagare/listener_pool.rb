@@ -59,13 +59,22 @@ module Nagare
       private
 
       def poll_stream(stream, listeners)
-        # TODO: Use thread pool
-        messages = Nagare::RedisStreams.read_next_messages(stream, group)
+        return unless Nagare::RedisStreams.group_exists?(stream, group)
+
+        messages = Nagare::RedisStreams.claim_next_stuck_message(stream, group)
+
+        if messages.nil? || messages.empty?
+          messages = Nagare::RedisStreams.read_next_messages(stream, group)
+        end
         return unless messages.any?
 
         messages.each do |message|
           deliver_message(stream, message, listeners)
         end
+      end
+
+      def claim_pending_messages(stream)
+        return nil unless Nagare::RedisStreams.group_exists?(stream, group)
       end
 
       def deliver_message(stream, message, listeners)
@@ -74,7 +83,6 @@ module Nagare
         listeners.each do |listener|
           invoke_listener(stream, message, listener)
         rescue StandardError => e
-          # TODO: Retry logic
           logger.error e.message
           logger.error e.backtrace.join("\n")
           listener_failed = true

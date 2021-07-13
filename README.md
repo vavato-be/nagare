@@ -40,19 +40,24 @@ To use with rails, add nagare to the initializers:
 #### config/initializers/nagare.rb
 ```ruby
 Nagare.configure do |config|
-  # After x seconds a consumer is considered dead and its messages
-  # are assigned to a different consumer in the group. Configuring
+  # After x milisseconds a pending message is considered failed and
+  # gets retried by a different consumer in the group. Configuring
   # it too low might cause double processing of messages as a consumer
   # "steals" the load of another while the first one is still processing
   # it and hasn't had the chance to ACK, configuring it too high will 
   # introduce latency in your processing.
-  # Default: 300 (5 minutes)
-  config.dead_consumer_timeout = 600
+  # Default: 600.000 (10 minutes)
+  config.min_idle_time = 600_0000
 
   # This is the consumer group name that will be used or created in
   # Redis. Use a different group for every microservice / application
   # Default: Rails.env
   config.group_name = :monolith
+
+  # A suffix is supported in order to separate different environments
+  # within the same redis database. Useful for development/test. This
+  # gets added automatically to stream names and consumer group names.
+  config.suffix = ''
 
   # URL to connect to redis. Defaults to redis://localhost:6379 uses 
   # ENV['REDIS_URL'] if present.

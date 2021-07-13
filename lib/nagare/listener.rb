@@ -43,6 +43,7 @@ module Nagare
     # The ClassMethods module is automatically loaded into child classes
     # effectively adding the `stream` class method to the child class.`
     def self.inherited(subclass)
+      super
       subclass.extend(ClassMethods)
     end
 
