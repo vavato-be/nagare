@@ -4,5 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rake', '~> 12.0'
-gem 'rspec', '~> 3.0'
 gem 'redis', github: 'vavato-be/redis-rb'
+gem 'rspec', '~> 3.0'
