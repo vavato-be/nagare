@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable
 module Nagare
-  VERSION = '0.1.5'
+  # rubocop:disable Style/StringLiterals
+  VERSION = "0.3.0"
+  # rubocop:enable Style/StringLiterals
 end

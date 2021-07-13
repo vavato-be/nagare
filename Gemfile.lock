@@ -7,7 +7,7 @@ GIT
 PATH
   remote: .
   specs:
-    nagare-redis (0.1.5)
+    nagare-redis (0.3.0)
       redis (~> 6.2, >= 6.2.0)
 
 GEM
