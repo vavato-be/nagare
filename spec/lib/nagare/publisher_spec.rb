@@ -31,13 +31,16 @@ RSpec.describe Nagare::Publisher do
 
   describe '#publish' do
     it 'publishes a message to the specified redis stream' do
-      message_id = publisher.publish('some_event_fired', { foo: 'bar' }, rspec_stream)
+      message_id = publisher.publish('some_event_fired', { foo: 'bar' },
+                                     rspec_stream)
       expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
     end
 
     it 'transforms the message into a { event_name: data } hash with json data' do
-      message_id = publisher.publish('some_event_fired', { foo: 'bar' }, rspec_stream)
-      expect(Nagare::RedisStreams.read_one(rspec_stream)).to match([message_id, { 'some_event_fired' => { foo: 'bar' }.to_json.to_json }])
+      message_id = publisher.publish('some_event_fired', { foo: 'bar' },
+                                     rspec_stream)
+      expect(Nagare::RedisStreams.read_one(rspec_stream)).to match([message_id,
+                                                                    { 'some_event_fired' => { foo: 'bar' }.to_json }])
     end
 
     describe 'has an optional stream parameter' do
@@ -51,7 +54,8 @@ RSpec.describe Nagare::Publisher do
 
         context 'when the stream parameter IS passed in' do
           it 'publishes to the stream provided' do
-            message_id = publisher.publish('some_event_fired', { foo: 'bar' }, rspec_stream)
+            message_id = publisher.publish('some_event_fired', { foo: 'bar' },
+                                           rspec_stream)
             expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
           end
         end
@@ -78,7 +82,8 @@ RSpec.describe Nagare::Publisher do
 
         context 'when the stream parameter IS passed in' do
           it 'publishes to the stream provided' do
-            message_id = publisher.publish('some_event_fired', { foo: 'bar' }, rspec_stream)
+            message_id = publisher.publish('some_event_fired', { foo: 'bar' },
+                                           rspec_stream)
             expect(Nagare::RedisStreams.read_one(rspec_stream).first).to eq message_id
           end
         end

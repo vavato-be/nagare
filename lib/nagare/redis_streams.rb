@@ -77,7 +77,7 @@ module Nagare
       # @return [String] message id
       def publish(stream, event_name, data)
         stream = stream_name(stream)
-        connection.xadd(stream, { "#{event_name}": data.to_json })
+        connection.xadd(stream, { "#{event_name}": data })
       end
 
       ##
