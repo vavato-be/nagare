@@ -12,6 +12,7 @@ module Nagare
   #
   # Important: Groups are always assumed to be named `<stream>-<group>`.
   #            Consumers are always created using the hostname + thread id
+  # rubocop:disable Metrics/ClassLength
   class RedisStreams
     class << self
       ##
@@ -226,3 +227,4 @@ module Nagare
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

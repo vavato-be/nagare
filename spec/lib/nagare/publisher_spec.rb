@@ -37,7 +37,7 @@ RSpec.describe Nagare::Publisher do
 
     it 'transforms the message into a { event_name: data } hash with json data' do
       message_id = publisher.publish('some_event_fired', { foo: 'bar' }, rspec_stream)
-      expect(Nagare::RedisStreams.read_one(rspec_stream)).to match([message_id, { 'some_event_fired' => { foo: 'bar' }.to_json }])
+      expect(Nagare::RedisStreams.read_one(rspec_stream)).to match([message_id, { 'some_event_fired' => { foo: 'bar' }.to_json.to_json }])
     end
 
     describe 'has an optional stream parameter' do
