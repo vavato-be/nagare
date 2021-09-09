@@ -83,10 +83,8 @@ module Nagare
         listeners.each do |listener|
           invoke_listener(stream, message, listener)
         rescue StandardError => e
-          logger.error e.message
-          logger.error e.backtrace.join("\n")
           listener_failed = true
-          # TODO: Notify Appsignal
+          Nagare::Config.error_handler.call(message, e)
         end
 
         return if listener_failed

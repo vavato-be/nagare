@@ -76,26 +76,63 @@ module Nagare
       # @return [String] message id
       def publish(stream, event_name, data)
         stream = stream_name(stream)
-        connection.xadd(stream, { "#{event_name}": data })
+        connection.xadd(stream, { "#{event_name}": data.to_json })
       end
 
       ##
       # Claums the next message of the consumer group that is stuck
       # (pending and past min_idle_time since being picked up)
       #
-      # @param stream [String] name of the stream
+      # @param stream_prefix [String] name of the stream
       # @param group [String] name of the consumer group
       #
       # @return [Array[Hash]] array containing the 1 message or empty
-      def claim_next_stuck_message(stream, group)
-        stream = stream_name(stream)
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def claim_next_stuck_message(stream_prefix, group)
+        stream = stream_name(stream_prefix)
         result = connection.xautoclaim(stream,
                                        "#{stream}-#{group}",
                                        "#{hostname}-#{thread_id}",
                                        Nagare::Config.min_idle_time,
                                        '0-0',
                                        count: 1)
+
+        # Move message to DLQ if retried too much and get next one
+        if result['entries'].any?
+          message_id = result['entries'].first.first
+          if retry_count(stream_prefix, group,
+                         message_id) > Nagare::Config.max_retries
+            move_to_dlq(stream_prefix, group, result['entries'].first)
+            return claim_next_stuck_message(stream, group)
+          end
+        end
+
         result['entries'] || []
+      end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      ##
+      # Uses XPENDING to verify the number of times the message was
+      # delivered
+      def retry_count(stream, group, message_id)
+        stream = stream_name(stream)
+        result = connection.xpending(stream,
+                                     "#{stream}-#{group}",
+                                     message_id,
+                                     message_id,
+                                     1)
+        return 0 unless result.any?
+
+        result.first['count']
+      end
+
+      ##
+      # Moves a message to the dead letter queue stream
+      def move_to_dlq(stream, group, message)
+        Nagare.logger.warn "Moving message to DLQ #{message} \
+                            from stream #{stream}"
+        publish(Nagare::Config.dlq_stream, stream, message)
+        mark_processed(stream, group, message.first)
       end
 
       ##

@@ -67,6 +67,19 @@ Nagare.configure do |config|
   # and in the background
   # Default: 3 threads
   config.threads = 3
+
+  # Nagare can execute a proc for error handling. This enables you to
+  # use APM tools like New Relic or Appsignal with it.
+  # The proc takes 2 parameters, message and error.
+  # By default, nagare logs the error to stderr.
+  config.error_handler = proc do |message, error|
+    Appsignal.set_error(error);
+  end
+
+  # After exceeding the maximum number of retries, nagare moves the
+  # failing messages to a Dead Letter Queue stream. 
+  # By default this stream is named 'dlq', but you can customize it.
+  config.dlq_stream = 'its_dead_jim'
 end
 ```
 
