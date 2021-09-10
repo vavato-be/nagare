@@ -132,7 +132,7 @@ module Nagare
       def move_to_dlq(stream, group, message)
         Nagare.logger.warn "Moving message to DLQ #{message} \
                             from stream #{stream}"
-        publish(Nagare::Config.dlq_stream, stream, message)
+        publish(Nagare::Config.dlq_stream, stream, message.to_json)
         mark_processed(stream, group, message.first)
       end
 
