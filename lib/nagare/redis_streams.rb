@@ -104,7 +104,7 @@ module Nagare
           if retry_count(stream_prefix, group,
                          message_id) > Nagare::Config.max_retries
             move_to_dlq(stream_prefix, group, result['entries'].first)
-            return claim_next_stuck_message(stream, group)
+            return claim_next_stuck_message(stream_prefix, group)
           end
         end
 
