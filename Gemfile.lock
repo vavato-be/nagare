@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nagare-redis (0.5.1)
+    nagare-redis (0.5.2)
       redis (~> 4.4, >= 4.4.0)
 
 GEM

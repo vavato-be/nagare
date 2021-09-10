@@ -6,6 +6,6 @@ module Nagare
   # see https://github.com/googleapis/release-please/blob/master/src/updaters/version-rb.ts
   #
   # rubocop:disable Style/StringLiterals
-  VERSION = "0.5.2"
+  VERSION = "0.5.3"
   # rubocop:enable Style/StringLiterals
 end
